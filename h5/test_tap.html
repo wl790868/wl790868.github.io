@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"  />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" media="(device-height: 568px)" />
+    <meta name="baidu-tc-cerfication" content="13b087439fd56802097fa357b9583e45"/>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta name="format-detection" content="telephone=no">
+	<title></title>
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+	#test_bt{
+		/*border: 50px solid #ccc;*/
+		display: inline-block;
+		font-size: 14px;
+		padding: 20px;
+		width: 100px;
+		height: 200px;
+		background: gray;
+	}
+	#test_bt:hover{
+		border-color: green;
+	}
+	#console{
+		float: right;
+		width: 50%;
+		margin-top: 20px;
+	}
+	</style>
+	<script src="http://a.tbcdn.cn/g/kissy/k/1.4.0/seed.js"></script>
+	<script src="http://a.tbcdn.cn/g/mtb/lib-mtop/0.1.7/mtop_all.debug.js"></script>
+	<script src="http://a.tbcdn.cn/g/kissy/k/1.4.0/import-style.js"></script>
+</head>
+<body>
+<a id="test_bt">Click me</a>
+<div id="console"></div>
+<script type="text/javascript">
+
+	function log(str){
+		document.getElementById('console').innerHTML += str + '<br/>';
+	}
+
+	KISSY.config({
+    	tag: false
+	});
+
+
+	KISSY.use('event, node', function(S){
+		var doc = S.one(document);
+		doc.delegate(S.UA.mobile ? 'tap' : 'click', 'a', _link_tap);
+		doc.delegate('click', 'a', _link_click);
+		doc.on('tap', function(e) {
+			log('own tap x=' + e.pageX + ' y=' + e.pageY)
+		})
+
+		doc.delegate('touchstart', 'a', function(e){
+			//log('touchstart-------')
+		});
+
+		doc.delegate('touchmove', 'a', function(e){
+			//log('touchmove-------')
+		});
+
+		doc.delegate('touchend', 'a', function(e){
+			//console.log('touchend-------')
+		});
+
+		function _link_tap(){
+			log('tap------');
+		}
+
+		function _link_click(e){
+			var rect = e.target.getBoundingClientRect();
+			log('click-----  x=' + e.pageX + ' y=' + e.pageY);
+			if(rect.right < e.pageX || rect.bottom < e.pageY
+				|| rect.left > e.pageX || rect.top > e.pageY) {
+				log('this click shouldn\'t be triggered!');
+			}
+			e.preventDefault();
+		}
+		/*
+			x = 149 触发 click
+			x = 140 触发 tap
+		 */
+
+	});
+</script>
+</body>
+</html>

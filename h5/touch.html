@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"  />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" media="(device-height: 568px)" />
+    <meta name="baidu-tc-cerfication" content="13b087439fd56802097fa357b9583e45"/>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <!-- 禁止数字串被处理为电话号码 -->
+    <meta name="format-detection" content="telephone=no" />
+	<title>touch</title>
+	<style type="text/css">
+	html, body{
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		border: 0;
+	}
+	canvas{
+		/*width: 100%;*/
+		/*height: 50%;*/
+		border: 1px solid #ccc;
+	}
+	#console{
+		margin-top: 10px;
+	}
+	</style>
+	<script>
+	window.addEventListener('load', startup, false);
+
+	var ongoingTouches = new Array;
+
+	function startup(){
+		var el = document.getElementsByTagName("canvas")[0];
+		el.addEventListener("touchstart", handleStart, false);
+		el.addEventListener("touchend", handleEnd, false);
+		el.addEventListener("touchcancel", handleCancel, false);
+		el.addEventListener("touchleave", handleLeave, false);
+		el.addEventListener("touchmove", handleMove, false);
+	}
+
+    
+    function colorForTouch(touch) {
+      var id = touch.identifier;
+      id = id.toString(16); // make it a hex digit
+      return "#" + id + id + id;
+    }
+    
+    function ongoingTouchIndexById(idToFind) {
+      for (var i=0; i
+	<ongoingTouches.length; i++) {
+        var id = ongoingTouches[i].identifier;
+        
+        if (id == idToFind) {
+          return i;
+        }
+      }
+      return -1;    // not found
+    }
+    
+    function handleStart(evt) {
+    	log('------------handleStart');
+
+      evt.preventDefault();
+      var el = document.getElementById("canvas");
+      var ctx = el.getContext("2d");
+      var touches = evt.changedTouches;
+            
+      for (var i=0; i<touches.length; i++) {
+        ongoingTouches.push(touches[i]);
+        var color = colorForTouch(touches[i]);
+        ctx.fillStyle = color;
+        ctx.fillRect(touches[i].pageX-2, touches[i].pageY-2, 4, 4);
+      }
+    }
+  
+    function handleMove(evt) {
+    	log('------------handleMove');
+
+      evt.preventDefault();
+      var el = document.getElementById("canvas");
+      var ctx = el.getContext("2d");
+      var touches = evt.changedTouches;
+      
+      ctx.lineWidth = 4;
+            
+      for (var i=0; i<touches.length; i++) {
+        var color = colorForTouch(touches[i]);
+        var idx = ongoingTouchIndexById(touches[i].identifier);
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
+        ctx.lineTo(touches[i].pageX, touches[i].pageY);
+        ctx.closePath();
+        ctx.stroke();
+        ongoingTouches.splice(idx, 1, touches[i]);  // swap in the new touch record
+      }
+    }
+
+    function handleEnd(evt) {
+		log('------------handleEnd');
+
+      evt.preventDefault();
+      var el = document.getElementById("canvas");
+      var ctx = el.getContext("2d");
+      var touches = evt.changedTouches;
+      
+      ctx.lineWidth = 4;
+            
+      for (var i=0; i<touches.length; i++) {
+        var color = colorForTouch(touches[i]);
+        var idx = ongoingTouchIndexById(touches[i].identifier);
+        
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(ongoingTouches[i].pageX, ongoingTouches[i].pageY);
+        ctx.lineTo(touches[i].pageX, touches[i].pageY);
+        ongoingTouches.splice(i, 1);  // remove it; we're done
+      }
+    }
+    
+    function handleCancel(evt) {
+		log('------------handleCancel');
+    	
+      evt.preventDefault();
+      var touches = evt.changedTouches;
+      
+      for (var i=0; i<touches.length; i++) {
+        ongoingTouches.splice(i, 1);  // remove it; we're done
+      }
+    }
+
+    function handleLeave(){
+    	log('------------handleLeave');
+    }
+
+	function log(v){
+		document.getElementById('console').innerHTML += v + '<br/>';
+		console.log(v);
+	}
+	</script>
+</head>
+<body>
+<canvas id="canvas" width="400" height="400"></canvas>
+<div>
+<input id="J_clear" onclick="document.getElementById('console').innerHTML = '';" type="button" value="清空" /><br/>
+</div>
+<div id="console">
+	
+</div>
+</body>
+</html>

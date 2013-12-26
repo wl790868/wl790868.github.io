@@ -1,0 +1,50 @@
+搜索首页 新添加活动模块数据格式如下：
+
+页面：搜索首页
+请求地址：http://www.taobao.com/go/rgn/etaoh5/search_index_php.php
+数据格式：
+{
+	"active":[...],
+	"cat":[...],
+	"new_active":[
+		{
+			"name":"",
+			"img":"",
+			"href": "", //android版 该字段无用
+			"q": {
+				"q": "",
+				"cate":""
+			}
+		}
+	]
+}
+
+页面：新添加活动二级页（该页面和活动二级页一样）
+请求地址：http://www.taobao.com/go/rgn/etaoh5/search_new_active.php
+数据格式：
+[
+	{
+		"name":"",
+		"img":"",
+		"q": {
+			"q": "",
+			"cate":""
+		},
+		"href": "", //android版 该字段无用
+		"banner": "",
+		"sec":[
+			{
+		        "name": "", 
+		        "href":"",              //android版 该字段无用
+		        "q": {
+		          "q": "", 
+		          "cate": ""
+		        }, 
+		        "img": "http://gtms01.alicdn.com/tps/i1/T1ro3UFfheXXcKzNvF-580-580.jpg"
+		    }
+		]
+	}
+]
+
+
+
